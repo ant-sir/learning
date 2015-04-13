@@ -7,7 +7,6 @@
  Description : Hello World in C, Ansi-style
  ============================================================================
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,7 +14,6 @@ struct node{
 	int data;
 	struct node* next;
 };
-
 
 
 struct node * add(int key, struct node *head)
@@ -105,7 +103,7 @@ void linklist_print(struct node * head)
 	printf("%d\n", head->data);
 }
 
-int main(void) {
+int test_linklist(void) {
 
 	struct node* head = NULL;
 	head = add(100, head);
@@ -117,6 +115,6 @@ int main(void) {
 	linklist_print(head);
 	del_all(102, head);
 	linklist_print(head);
-//	puts("!!!Hello World!!!"); /* prints !!!Hello World!!! */
-	return EXIT_SUCCESS;
+
+	return 0;
 }

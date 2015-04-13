@@ -77,11 +77,11 @@ void factorial( int num )
 /**
  * 求2~2000的所有素数.有足够的内存,要求尽量快
  */
-int findvalue[2000] = {2};
-static int find = 1;
 
 bool adjust(int value)
 {
+	static int findvalue[2000] = {2};
+	static int find = 1;
 	assert(value >= 2);
 	if(value == 2)
 		return true;
@@ -350,7 +350,10 @@ void quick_sort(int arr[], int left, int right)
 	quick_sort(arr, i + 1, right);
 }
 
-int main(void) {
+int test_huawei_audition(void) {
+	for(int i = 2; i <= 2000; i++)
+		if( adjust(i) )
+			printf("%d ", i);
 //	print_prime_number(100);
 //	josephus(10, 3, 2);
 //	josephus2(10, 3);
@@ -359,24 +362,15 @@ int main(void) {
 //	char* a = "hello world";
 //	char* b = "hello world	";
 //	printf("%d\n", strcmp_self(a, b));
-//	int **a[3][4];
-//	printf("%lu\n", sizeof(a));
-//	for(int y = 1956; y <= 2015;)
-//		for(int m = 1; m <=12; )
-//			for(int d = 1; d <= 31; )
-//				for(int h = 0; h <= 23; )
-//					for(int m2 = 0; m2 <=59;)
-//						for(int s = 0; s <= 59;)
-//						{
-//							time_print(&y, &m, &d, &h, &m2, &s);
-//							usleep(50000);
-//						}
-	int arr[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
-	//intsert_srot(arr, sizeof(arr)/sizeof(arr[0]));
-	quick_sort(arr, 0, sizeof(arr)/sizeof(arr[0]) - 1);
-	for(int i = 0; i < sizeof(arr)/sizeof(arr[0]); i++)
-		printf("%d ", arr[i]);
-	printf("\n");
+//	int **arr_test[3][4];
+//	printf("%lu\n", sizeof(arr_test));
+//
+//	int arr[] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+//	//intsert_srot(arr, sizeof(arr)/sizeof(arr[0]));
+//	quick_sort(arr, 0, sizeof(arr)/sizeof(arr[0]) - 1);
+//	for(int i = 0; i < sizeof(arr)/sizeof(arr[0]); i++)
+//		printf("%d ", arr[i]);
+//	printf("\n");
 
-	return EXIT_SUCCESS;
+	return 0;
 }
