@@ -10,6 +10,7 @@ extern int test_linklist(void);
 
 int main(int argc, char* argv[])
 {
+    printf("master");
 	test_linklist();
 	test_huawei_audition();
 	return 0;
