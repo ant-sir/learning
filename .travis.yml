@@ -1,7 +1,5 @@
 language: cpp
 sudo: required
-compiler:
-  - g++
 cache:
   apt: true
 env:
