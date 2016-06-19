@@ -2,6 +2,11 @@ language: cpp
 sudo: required
 compiler:
   - g++
+cache:
+  apt: true
+env:
+  - CXX=g++-4.8
+
 addons:
   apt:
     sources:
