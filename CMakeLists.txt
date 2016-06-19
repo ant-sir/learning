@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 2.6)
+
+file(GLOB SUB_DIR_LIST RELATIVE ${PROJECT_SOURCE_DIR} *)
+
+foreach(SUB_DIR ${SUB_DIR_LIST})
+    if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${SUB_DIR} AND EXISTS ${PROJECT_SOURCE_DIR}/${SUB_DIR}/CMakeLists.txt)
+        message(STATUS "Add subdirectory ${SUB_DIR}")
+        add_subdirectory(${SUB_DIR})
+    endif(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${SUB_DIR} AND EXISTS ${PROJECT_SOURCE_DIR}/${SUB_DIR}/CMakeLists.txt)
+endforeach(SUB_DIR)
