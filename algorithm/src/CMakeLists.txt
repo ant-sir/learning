@@ -1,4 +1,2 @@
-SET(SRC_LIST huawei_audition.c linklist.c main.c)
-#SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
-#SET(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/lib})
-ADD_EXECUTABLE(algorithm ${SRC_LIST})
+file(GLOB SRC_LIST *.c)
+add_executable(algorithm ${SRC_LIST})
