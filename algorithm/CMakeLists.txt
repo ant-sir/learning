@@ -1,3 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT(algorithm)
-ADD_SUBDIRECTORY(src algorithm)
+include_directories(${PROJECT_SOURCE_DIR}/include)
+link_directories(${PROJECT_SOURCE_DIR}/lib)
+project(algorithm)
+add_subdirectory(src algorithm)
