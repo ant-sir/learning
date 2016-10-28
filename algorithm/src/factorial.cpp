@@ -13,9 +13,9 @@
  * 用数组操作整数
  */
 
-void factorial(int num, int output[], int len)
+void factorial(int num, int output[], unsigned int len)
 {
-	memset(output, 0, len);
+    memset(output, 0, len);
 	output[0] = num;
 	/**
 	 * num! = num*(num-1)*(num-2)...*2*1

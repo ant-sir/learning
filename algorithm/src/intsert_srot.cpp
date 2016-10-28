@@ -12,7 +12,7 @@
  * 时间复杂度O(n^2)
  * 稳定排序方法
  */
-void intsert_srot(int arr[], int len)
+void insert_sort(int arr[], int len)
 {
 	for(int i = 1; i < len; i++)
 	{
