@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <errno.h>
 #include <stdlib.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -7,6 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <arpa/inet.h>
 
 typedef struct _PKT_INFO
 {
@@ -23,10 +25,28 @@ typedef union _PKT_INFO_SEND
     unsigned char buf[sizeof(PKT_INFO)];
 } PKT_INFO_SEND;
 
+int socket_set_fcntl(int sockfd, int flags)
+{
+    int old_flags = 0;
+    
+    if ((old_flags = fcntl(sockfd, F_GETFL, 0)) < 0)
+    {
+        perror("get fcntl error");
+        return -1;
+
+    }
+
+    if (fcntl(sockfd, F_SETFL, old_flags | flags) < 0)
+    {
+        perror("set fcntl error");
+        return -1;
+    }
+
+    return 0;
+}
 int create_tcp_server(void)
 {
     int sockfd = 0;
-    int flags = 0;
     struct sockaddr_in addr;
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1)
@@ -34,14 +54,9 @@ int create_tcp_server(void)
         perror("Create socket error");
         return -1;
     }
-    
-    flags = fcntl(sockfd, F_GETFL, 0);
 
-    if (fcntl(sockfd, F_SETFL, flags|O_NONBLOCK) < 0)
-    {
-        perror("set fcntl error");
+    if (socket_set_fcntl(sockfd, O_NONBLOCK) < 0)
         return -1;
-    }
 
     bzero(&addr, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -86,7 +101,7 @@ int create_epoll_handle(int sockfd)
     return epfd;
 }
 
-void server_epoll_wait(int epfd, int listenfd)
+int server_epoll_wait(int epfd, int listenfd)
 {
     int i = 0;
     int sockfd = 0;
@@ -100,7 +115,7 @@ void server_epoll_wait(int epfd, int listenfd)
     unsigned char buf[1500];
 
     int nfds = epoll_wait(epfd, events, 10, 0);
-    
+
     for(i = 0; i < nfds; i++ )
     {
         if (events[i].data.fd == listenfd)
@@ -108,7 +123,7 @@ void server_epoll_wait(int epfd, int listenfd)
             if ((sockfd = accept(listenfd, (struct sockaddr *)&clientaddr, &clilen)) < 0)
             {
                 perror("accept error");
-                return;
+                return -1;
             }
             else
             {
@@ -117,15 +132,17 @@ void server_epoll_wait(int epfd, int listenfd)
                 ev.data.fd = sockfd;
                 ev.events = EPOLLIN | EPOLLOUT | EPOLLET;
 
+                if (socket_set_fcntl(sockfd, O_NONBLOCK) < 0)
+                    return -1;
+
                 if (epoll_ctl(epfd, EPOLL_CTL_ADD, sockfd, &ev) < 0)
                 {
                     perror("epoll ctl error");
-                    return;
+                    return -1;
                 }
-
             }
         }
-        else if( events[i].events & EPOLLIN )
+        else if( events[i].events & EPOLLIN)
         {
             sockfd = events[i].data.fd;
             bzero(tmp, sizeof(tmp));
@@ -136,14 +153,31 @@ void server_epoll_wait(int epfd, int listenfd)
                 memmove(pbuf, tmp, rcvlen);
                 pbuf += rcvlen;
             }
+            if (rcvlen == -1)
+            {
+                if (errno != EAGAIN && errno != EWOULDBLOCK)
+                {
+                    perror("recv error");
+                    continue;
+                }
+            }
+            else if (rcvlen == 0)
+            {
+                perror("client leave");
+                close(sockfd);
+                continue;
+            }
 
-            rcvlen = pbuf - buf;
-
-            for(i = 0; i < rcvlen; i++)
-                printf("%02x ", buf[i]);
-            printf("\n");
+            if ((rcvlen = pbuf - buf) > 0)
+            {
+                printf("%s\n", buf);
+            }
+            /* send back*/
+            send(sockfd, "I have recv your msg.\n", strlen("I have recv your msg.\n"), 0);
         }
     }
+
+    return 0;
 }
 
 int main()
