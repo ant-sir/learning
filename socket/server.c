@@ -28,7 +28,7 @@ typedef union _PKT_INFO_SEND
 int socket_set_fcntl(int sockfd, int flags)
 {
     int old_flags = 0;
-    
+
     if ((old_flags = fcntl(sockfd, F_GETFL, 0)) < 0)
     {
         perror("get fcntl error");
